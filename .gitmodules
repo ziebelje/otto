@@ -1,0 +1,12 @@
+[submodule "yinaf"]
+	path = yinaf
+	url = https://github.com/nicklynj/yinaf.git
+[submodule "js/lib/yinaf"]
+	path = js/lib/yinaf
+	url = https://github.com/nicklynj/yinaf.git
+[submodule "js/lib/jex"]
+	path = js/lib/jex
+	url = https://github.com/ziebelje/jex.git
+[submodule "js/lib/rocket"]
+	path = js/lib/rocket
+	url = https://github.com/nicklynj/rocket.git
