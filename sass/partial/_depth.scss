@@ -1,0 +1,10 @@
+@mixin depth($depth) {
+  @if ($depth == 0) {
+    box-shadow: none;
+  }
+  @else {
+    box-shadow:
+      0 (2px * $depth) (4px * $depth) 0 rgba(0, 0, 0, 0.12),
+      1px 1px 2px rgba(0, 0, 0, 0.02);
+  }
+}

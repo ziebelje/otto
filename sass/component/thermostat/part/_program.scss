@@ -1,0 +1,49 @@
+/* https://davidwalsh.name/css-flip */
+.flip_container {
+  perspective: 1000;
+  margin: auto;
+  text-align: center;
+}
+
+.flip_container img {
+  width: 32px;
+  height: 32px;
+}
+
+.flip_container.flip .flipper {
+  transform: rotateY(180deg);
+}
+
+.flip_container, .front, .back {
+  width: 32px;
+  height: 32px;
+}
+
+.flipper {
+  transition: 500ms;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.front, .back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+& .program_container {
+  color: $asbestos;
+  font-weight: 300;
+  text-align: center;
+}

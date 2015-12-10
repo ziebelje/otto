@@ -1,0 +1,5 @@
+.card {
+  @include paper(1);
+  position: relative;
+  background: #fff;
+}

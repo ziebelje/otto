@@ -1,0 +1,6 @@
+@mixin paper($depth) {
+  @include depth($depth);
+  border-radius: $border_radius;
+  background: #fff;
+  overflow: auto;
+}

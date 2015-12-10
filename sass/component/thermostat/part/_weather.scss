@@ -1,0 +1,13 @@
+& .icon_container, & .temperature_container {
+  text-align: center;
+}
+
+& .icon_container img {
+  width: 32px;
+  height: 32px;
+}
+
+& .temperature_container {
+  color: $asbestos;
+  font-weight: 300;
+}

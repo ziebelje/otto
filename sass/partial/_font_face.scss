@@ -1,0 +1,40 @@
+/**
+ * This will declare a font-face and provide a cross-browser implementation
+ * for loading your font, assuming you provide the appropriate files (eot, woff,
+ * ttf, svg).
+ *
+ * Note about SVG fonts: Make sure the ID attribute on the <font> tag in the SVG
+ * document matches the name of the font you are using. For example, Arial
+ * should have <font id="Arial">. Spaces are technically not allowed here but
+ * they don't seem to cause any problems so I'm currently ignoring that case.
+
+ * Usage:
+ *
+ * @include font_face('Open Sans', '../font/open_sans/open_sans__regular', normal, normal);
+ * @include font_face('Open Sans', '../font/open_sans/open_sans__bold', bold, normal);
+ * @include font_face('Open Sans', '../font/open_sans/open_sans__italic', normal, italic);
+ *
+ * @param {string} font_family The name of the font as you want to use it in
+ * font-family styles.
+ * @param {string} filename The filename of the font WITHOUT an extension.
+ * @param {string} font_weight
+ * normal|bold|bolder|lighter|inherit|100|200|300|400|500|600|700|800|900
+ * @param {string} font_style normal|italic|oblique
+ *
+ * @link http://www.paulirish.com/2009/bulletproof-font-face-implementation-syntax/
+ * @link http://www.fontspring.com/blog/the-new-bulletproof-font-face-syntax
+ * @link http://alistapart.com/article/say-no-to-faux-bold
+ */
+@mixin font_face($font_family, $filename, $font_weight, $font_style) {
+  @font-face {
+    font-family: $font_family;
+    font-weight: $font_weight;
+    font-style: $font_style;
+
+    src:
+      url($filename + '.eot?') format('embedded-opentype'),
+      url($filename + '.woff') format('woff'),
+      url($filename + '.ttf') format('truetype'),
+      url($filename + '.svg#' + $font_family) format('svg');
+  }
+}

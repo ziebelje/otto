@@ -1,0 +1,34 @@
+& {
+  text-align: right;
+  background: $light_clouds;
+  border-top-left-radius: $border_radius;
+  border-bottom-left-radius: $border_radius;
+  // TODO: Replace this with a container...
+}
+
+& .option {
+  position: relative;
+  transition: color 100ms ease;
+  padding: 6px;
+  color: $silver;
+}
+
+& .option.active {
+  color: $clouds;
+}
+
+& .slider {
+  position: absolute;
+  background: $midnight_blue;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  right: 0;
+
+  // Will cause slider to fade in when loading the first time instead of sliding
+  // from a "random" spot.
+  transition: top 100ms ease, opacity 100ms ease 100ms;
+
+  border-top-left-radius: $border_radius;
+  border-bottom-left-radius: $border_radius;
+}

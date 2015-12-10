@@ -1,0 +1,39 @@
+& .card {
+  background: $wet_asphalt;
+  text-align: center;
+}
+
+& .hello {
+  font-weight: 100;
+  font-size: 40px;
+  color: $clouds;
+  display: block;
+  background: $midnight_blue;
+  padding: $gutter;
+}
+
+& .otto {
+  position: relative;
+  margin: ($gutter * 3) auto ($gutter * 3) auto;
+  width: 220px;
+  height: 220px;
+}
+
+& .otto .wheel, & .otto .body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+
+& .otto .wheel {
+  background: url('../img/component/otto/wheel.png') no-repeat;
+  background-size: cover;
+  animation: otto_wheel ease 10s infinite;
+}
+
+& .otto .body {
+  background: url('../img/component/otto/body.png') no-repeat;
+  background-size: cover;
+  animation: otto_body ease 10s infinite;
+}

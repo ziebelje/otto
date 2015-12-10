@@ -1,0 +1,38 @@
+& .main_table {
+  width: 100%;
+  margin: ($gutter * 4) 0 ($gutter * 4) 0;
+}
+
+& .setpoints, & .right_spacer {
+  width: 120px;
+}
+
+& .setpoint_container {
+  float: left;
+  width: 50%;
+}
+
+& .temperature {
+  width: 200px;
+  height: 200px;
+  margin: auto;
+}
+
+& .mode {
+  position: absolute;
+  top: $gutter;
+  right: 0;
+}
+
+& .footer {
+  background: $light_clouds;
+  padding: $gutter;
+}
+
+& .footer table {
+  width: 100%;
+}
+
+& .footer .weather, & .footer .history {
+  width: 100px;
+}

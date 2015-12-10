@@ -1,0 +1,21 @@
+// http://cssanimate.com/
+
+@keyframes otto_wheel {
+  0%  { transform: rotate(0deg); }
+  30% { transform: rotate(1deg); }
+  40% { transform: rotate(1deg); }
+  70% { transform: rotate(-2deg); }
+  80% { transform: rotate(-2deg); }
+  90% { transform: rotate(0deg); }
+}
+
+@keyframes otto_body {
+  0%  { transform: rotate(0deg); }
+  30% { transform: rotate(0.3deg); }
+  40% { transform: rotate(0.3deg); }
+  70% { transform: rotate(-0.5deg); }
+  80% { transform: rotate(-0.5deg); }
+  90% { transform: rotate(0deg); }
+}
+
+// TODO: Wrap the body and wheel in an outer container that will do the bob.

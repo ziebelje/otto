@@ -1,0 +1,79 @@
+@mixin icon() {
+  font-style: normal;
+  font-family: 'FarmScout';
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@mixin icon_size($size) {
+  line-height: $size;
+  font-size: $size;
+  width: $size;
+  height: $size;
+}
+
+i {
+  @include icon();
+  @include icon_size(16px);
+}
+
+.icon_16 { @include icon_size(16px); }
+.icon_24 { @include icon_size(24px); }
+.icon_32 { @include icon_size(32px); }
+.icon_48 { @include icon_size(48px); }
+.icon_64 { @include icon_size(64px); }
+
+.icon_paper_airplane:before { content: '\e600'; }
+.icon_search:before { content: '\e608'; }
+.icon_location:before { content: '\e602'; }
+.icon_map:before { content: '\e603'; }
+.icon_envelope:before { content: '\e604'; }
+.icon_down:before { content: '\e60a'; }
+.icon_down {
+  transition: transform 200ms;
+}
+.icon_down_rotate_up {
+  transform: rotate(180deg);
+}
+.icon_tractor:before { content: '\e615'; }
+.icon_mortarboard:before { content: '\e614'; }
+.icon_market_stand:before { content: '\e616'; }
+.icon_menu:before { content: '\e618'; }
+.icon_check:before { content: '\e619'; }
+.icon_loading:before { content: '\e61a'; }
+.icon_pdf:before { content: '\e800'; }
+.icon_info_outline:before { content: '\e801'; }
+// .icon_help:before { content: '\e802'; }
+
+.icon_facebook:before { content: '\e605'; }
+.icon_twitter:before { content: '\e607'; }
+.icon_linkedin:before { content: '\e609'; }
+.icon_instagram:before { content: '\e601'; }
+.icon_link:before { content: '\e617'; }
+
+.icon_baked_goods:before { content: '\e60c'; }
+.icon_dairy:before { content: '\e612'; }
+.icon_artisans:before { content: '\e613'; }
+.icon_plants_and_flowers:before { content: '\e610'; }
+.icon_vegetables:before { content: '\e60f'; }
+.icon_meats:before { content: '\e611'; }
+.icon_prepared_foods:before { content: '\e60d'; }
+.icon_fruits:before { content: '\e60e'; }
+
+.icon_spring:before { content: '\e903'; }
+.icon_summer:before { content: '\e902'; }
+.icon_fall:before { content: '\e900'; }
+.icon_winter:before { content: '\e901'; }
+
+@keyframes anim-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.icon_loading {
+  animation: anim-rotate 1s infinite linear;
+}

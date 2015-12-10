@@ -1,0 +1,10 @@
+body {
+  @include prevent_select();
+  font-family: "Roboto";
+  font-weight: 400;
+  margin: $gutter * 2;
+  padding: 0;
+  overflow-y: scroll;
+  background: $clouds;
+  color: #222;
+}

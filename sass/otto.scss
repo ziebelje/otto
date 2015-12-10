@@ -1,0 +1,37 @@
+$gutter: 8px;
+$border_radius: 2px;
+
+@import "partial/font_face";
+@import "partial/typography";
+@import "partial/depth";
+@import "partial/paper";
+@import "partial/palette";
+@import "partial/prevent_select";
+@import "partial/animation";
+// @import "partial/clearfix";
+
+@import "global/body";
+@import "global/border_box";
+@import "global/card";
+// @import "global/icon";
+// @import "global/grid";
+
+.layer {
+  // &.dashboard { @import "layer/dashboard"; }
+}
+
+.component {
+  &.otto {
+    @import "component/otto";
+  }
+  &.thermostat {
+    @import "component/thermostat";
+    &.part {
+      &.temperature { @import "component/thermostat/part/temperature"; }
+      &.mode { @import "component/thermostat/part/mode"; }
+      &.weather { @import "component/thermostat/part/weather"; }
+      &.setpoint { @import "component/thermostat/part/setpoint"; }
+      &.program { @import "component/thermostat/part/program"; }
+    }
+  }
+}

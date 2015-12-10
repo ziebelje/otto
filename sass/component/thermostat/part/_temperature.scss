@@ -1,0 +1,41 @@
+$temperature_font_size: 100px;
+$temperature_font_size_delta: 10px;
+& .circle {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  line-height: 200px;
+  text-align: center;
+  color: $clouds;
+  font-weight: 100;
+  font-size: $temperature_font_size;
+  transition: background 500ms, box-shadow 400ms, font-size 200ms;
+  box-sizing: border-box;
+}
+
+& .circle.off { background: $concrete; }
+& .circle.heat { background: $alizarin; }
+& .circle.cool { background: $peter_river; }
+& .circle.aux {
+  background: $alizarin;
+  box-shadow:
+    inset 0px 0px 0px 7px $alizarin,
+    inset 0px 0px 0px 14px darken($alizarin, 10%);
+
+  // Tried this with a repeating-radial-gradient background but transitions
+  // aren't supported on it yet.
+  // background: repeating-radial-gradient(
+  //   circle,
+  //   $alizarin,
+  //   $alizarin 85px,
+  //   darken($alizarin, 10%) 85px,
+  //   darken($alizarin, 10%) 93px
+  // );
+}
+
+& .circle.push {
+  font-size: $temperature_font_size + $temperature_font_size_delta;
+}
+& .circle.pull {
+  font-size: $temperature_font_size - $temperature_font_size_delta;
+}

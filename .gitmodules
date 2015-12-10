@@ -10,3 +10,6 @@
 [submodule "js/lib/rocket"]
 	path = js/lib/rocket
 	url = https://github.com/nicklynj/rocket.git
+[submodule "api/lib/sqlbee"]
+	path = api/lib/sqlbee
+	url = https://github.com/ziebelje/sqlbee.git
