@@ -316,7 +316,6 @@ component.thermostat.ecobee.prototype.get_min_cool = function(opt_data) {
  * @return {String} home|away|sleep|vacation|manual
  */
 component.thermostat.ecobee.prototype.get_program = function(opt_data) {
-  debugger;
   var self = this;
 
   var data = opt_data !== undefined ? opt_data : cache.cache;

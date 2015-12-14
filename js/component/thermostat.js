@@ -15,6 +15,9 @@ component.thermostat = function(dashboard) {
 $.inherits(component.thermostat, component);
 
 component.thermostat.prototype.dashboard_;
+component.thermostat.prototype.current_mode_;
+component.thermostat.prototype.part_setpoint_heat_container_;
+component.thermostat.prototype.part_setpoint_cool_container_;
 
 
 /**
@@ -27,26 +30,32 @@ component.thermostat.prototype.decorate = function(parent) {
   parent.appendChild(card);
 
   // Main table
-  var main_table = new jex.table({'rows': 1, 'columns': 3});
-  card.appendChild(main_table.table());
-  main_table.table().addClass('main_table');
-  main_table.td(0, 0).addClass('setpoints');
-  main_table.td(2, 0).addClass('right_spacer');
+  var setpoint_temperature_table = new jex.table({'rows': 1, 'columns': 3});
+  card.appendChild(setpoint_temperature_table.table());
+  setpoint_temperature_table.table().addClass('setpoint_temperature_table');
+  setpoint_temperature_table.td(1, 0).addClass('temperature_td');
 
   // Setpoints
-  var part_setpoint_heat_container = $.createElement('div').addClass('setpoint_container');
-  main_table.td(0, 0).appendChild(part_setpoint_heat_container);
-  var part_setpoint_heat = new component.thermostat.part.setpoint(this, 'heat');
-  part_setpoint_heat.render(part_setpoint_heat_container);
+  var setpoint_outer_container = $.createElement('div').addClass('setpoint_outer_container');
+  setpoint_temperature_table.td(0, 0).appendChild(setpoint_outer_container);
 
-  var part_setpoint_cool_container = $.createElement('div').addClass('setpoint_container');
-  main_table.td(0, 0).appendChild(part_setpoint_cool_container);
+  this.part_setpoint_heat_container_ = $.createElement('div').addClass('setpoint_inner_container');
+  setpoint_outer_container.appendChild(this.part_setpoint_heat_container_);
+  var part_setpoint_heat = new component.thermostat.part.setpoint(this, 'heat');
+  part_setpoint_heat.render(this.part_setpoint_heat_container_);
+
+  this.part_setpoint_cool_container_ = $.createElement('div').addClass('setpoint_inner_container');
+  setpoint_outer_container.appendChild(this.part_setpoint_cool_container_);
   var part_setpoint_cool = new component.thermostat.part.setpoint(this, 'cool');
-  part_setpoint_cool.render(part_setpoint_cool_container);
+  part_setpoint_cool.render(this.part_setpoint_cool_container_);
+
+  this.current_mode_ = this.get_mode();
+
+  this.envoy.addEventListener('thermostat_mode_change', this.thermostat_mode_change_.bind(this));
 
   // Temperature
   var part_temperature = new component.thermostat.part.temperature(this);
-  part_temperature.render(main_table.td(1, 0));
+  part_temperature.render(setpoint_temperature_table.td(1, 0));
 
   // Mode
   var part_mode_container = $.createElement('div').addClass('mode');
@@ -127,5 +136,87 @@ component.thermostat.prototype.get_effective_mode = function() {
   }
   else {
     return mode;
+  }
+};
+
+
+/**
+ * Switch which setpoint components are displayed.
+ *
+ * @param {Event} e
+ *
+ * @private
+ */
+component.thermostat.prototype.thermostat_mode_change_ = function(e) {
+  if (e.detail.component === this) {
+    var current_mode = this.current_mode_;
+    var new_mode = this.get_mode();
+
+    // Whether or not the heat/cool setpoint is currently visible
+    var heat_visible = ['heat', 'auto', 'aux'].indexOf(current_mode) !== -1;
+    var cool_visible = ['cool', 'auto'].indexOf(current_mode) !== -1;
+
+    var show_heat = ['heat', 'auto', 'aux'].indexOf(new_mode) !== -1;
+    var show_cool = ['cool', 'auto'].indexOf(new_mode) !== -1;
+
+    // This is a bit verbose but it's easier than trying to figure out and
+    // debug a bunch of dynamic logic which ends up being about the same
+    // amount of code, just harder to read.
+    if (heat_visible === false && cool_visible === false) {
+      if (show_heat === true && show_cool === true) { // off => h,c
+        this.part_setpoint_heat_container_[0].className = 'instant_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'instant_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === true) { // off => h
+        this.part_setpoint_heat_container_[0].className = 'double_width instant_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transparent no_width instant_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_cool === true) { // off => c
+        this.part_setpoint_heat_container_[0].className = 'transparent no_width instant_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'double_width instant_width_transition_opacity setpoint_inner_container';
+      }
+    }
+    else if (heat_visible === true && cool_visible === true) {
+      if (show_heat === false && show_cool === false) { // h,c => off
+        this.part_setpoint_heat_container_[0].className = 'transparent transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transparent transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === true && show_cool === false) { // h,c => h
+        this.part_setpoint_heat_container_[0].className = 'double_width transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transparent no_width transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === false && show_cool === true) { // h,c => c
+        this.part_setpoint_heat_container_[0].className = 'transparent no_width transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'double_width transition_width_transition_opacity setpoint_inner_container';
+      }
+    }
+    else if (heat_visible === true && cool_visible === false) {
+      if (show_heat === true && show_cool === true) { // h => h,c
+        this.part_setpoint_heat_container_[0].className = 'transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === false && show_cool === true) { // h => c
+        this.part_setpoint_heat_container_[0].className = 'transparent no_width transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'double_width transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === false && show_cool === false) { // h => off
+        this.part_setpoint_heat_container_[0].className = 'transparent setpoint_inner_container';
+      }
+    }
+    else if (heat_visible === false && cool_visible === true) {
+      if (show_heat === true && show_cool === true) { // c => h,c
+        this.part_setpoint_heat_container_[0].className = 'transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === true && show_cool === false) { // c => h
+        this.part_setpoint_heat_container_[0].className = 'double_width transition_width_transition_opacity setpoint_inner_container';
+        this.part_setpoint_cool_container_[0].className = 'transparent no_width transition_width_transition_opacity setpoint_inner_container';
+      }
+      else if (show_heat === false && show_cool === false) { // c => off
+        this.part_setpoint_cool_container_[0].className = 'transparent setpoint_inner_container';
+      }
+    }
+
+    this.current_mode_ = new_mode;
   }
 };
