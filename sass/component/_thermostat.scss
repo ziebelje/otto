@@ -1,28 +1,28 @@
+$thermostat_setpoint_width: 50px;
+
 // Setpoint & temperature table and containers
 & .setpoint_temperature_table {
   width: 100%;
   margin: ($gutter * 4) 0 ($gutter * 4) 0;
   table-layout: fixed;
 }
-
 & .temperature_td {
   width: 200px;
 }
 
+// Setpoint containers
 & .setpoint_outer_container {
-  // border: 1px solid red;
   text-align: center;
   margin: auto;
 }
-
-$thermostat_setpoint_width: 50px;
 & .setpoint_inner_container {
-  // border: 1px solid blue;
   display: inline-block;
   width: $thermostat_setpoint_width;
-  // transition: width 200ms;
 }
 
+// Transition classes in order to sometimes instantly set the width and
+// sometimes transition the width, depending on what the effect needs to look
+// like
 & .setpoint_inner_container.instant_width_transition_opacity {
   transition: opacity 200ms ease;
 }
@@ -30,25 +30,19 @@ $thermostat_setpoint_width: 50px;
   transition: width 200ms ease, opacity 100ms ease;
 }
 
-& .double_width {
+// Transition to double width if showing a single setpoint, and no width when
+// removing one.
+& .setpoint_inner_container.double_width {
   width: $thermostat_setpoint_width * 2;
 }
-
-& .no_width {
+& .setpoint_inner_container.no_width {
   width: 0;
 }
 
-& .temperature {
-  margin: auto;
-}
-
-& .transparent {
+// For when a setpoint component is hidden
+& .setpoint_inner_container.transparent {
   opacity: 0;
 }
-
-// & .opaque {
-//   opacity: 1;
-// }
 
 // Thermostat mode on right
 & .mode {
