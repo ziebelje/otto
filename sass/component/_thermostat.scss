@@ -51,6 +51,17 @@ $thermostat_setpoint_width: 50px;
   right: 0;
 }
 
+// Thermostat alerts on top left
+& .alerts {
+  position: absolute;
+  top: $gutter / 2;
+  left: $gutter / 2;
+  // border: 1px dotted orange;
+  // font-size: 10px;
+  width: 200px;
+  // height: 50px;
+}
+
 // Footer contents
 & .footer {
   background: $light_clouds;

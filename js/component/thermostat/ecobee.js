@@ -41,6 +41,90 @@ component.thermostat.ecobee.modes = {
 
 
 /**
+ * Alert map. The default ecobee alert text is a bit too verbose so I'm using
+ * the codes to display shorter alerts.
+ *
+ * Leaving these code ranges out because I don't happen to need them and I don't
+ * want to bother implementing code range support. Any code that is not listed
+ * here will still show up - it will just say see ecobee for message.
+ *
+ * 4100 - 4199 ClimateTalk device alert major/minor fault codes
+ * 4200 - 4299 ClimateTalk device lost communications
+ * 4300 - 4399 ClimateTalk system message from device
+ * 6002 - 6005 DR voluntary alerts
+ * 8300 - 8599 ClimateMaster Heatpump/hardware Unit Alerts
+ * 8000 - 8299 Daikin Indoor/Outdoor Unit Alerts
+ *
+ * @see https://www.ecobee.com/home/developer/api/documentation/v1/objects/Alert.shtml
+ *
+ * @type {Object}
+ */
+component.thermostat.ecobee.alerts = {
+  '611': 'Invalid registration password',
+  '1000': 'Indoor temperature low',
+  '1001': 'Indoor temperature high',
+  '1002': 'Sensor activated shutting down compressor',
+  '1003': 'Problem with furnace/boiler heating',
+  '1004': 'Problem with heatpump heating',
+  '1005': 'Problem with heatpump heating',
+  '1006': 'Problem with cooling',
+  '1007': 'Communication to EI failed',
+  '1009': 'Problem with aux heat, running too much',
+  '1010': 'Aux heat used with high outdoor temp',
+  '1011': 'Sensor activated switching to occupied',
+  '1012': 'Sensor activated switching to unoccupied',
+  '1013': 'Sensor activated disabling AC',
+  '1014': 'Sensor activated setting temp up/down',
+  '1015': 'Sensor activated',
+  '1016': 'Sensor activated opening/closing relay',
+  '1017': 'Sensor activated turning on fan',
+  '1018': 'Sensor activated shutting down aux heat',
+  '1019': 'Sensor activated shutting down heating/cooling',
+  '1020': 'Low humidity alert',
+  '1021': 'High humidity alert',
+  '1022': 'Sensor activated shutting down heat',
+  '1024': 'Sensor activated humidifier',
+  '1025': 'Sensor activated dehumidifier',
+  '1026': 'Low battery',
+  '1027': 'Sensor detected',
+  '1028': 'Sensor not communicating',
+  '1029': 'Sensor re-established',
+  '1030': 'Invalid current temp reading',
+  '1031': 'Current temp reading restored',
+  '1032': 'Faulty humidity sensor',
+  '1033': 'Faulty humidity sensor',
+  '1034': 'Incorrect Zigbee module installed',
+  '3130': 'Need furnace maintenance',
+  '3131': 'Need humidifier maintenance',
+  '3132': 'Need ventilator maintenance',
+  '3133': 'Need dehumidifier maintenance',
+  '3134': 'Need economizer maintenance',
+  '3135': 'Need UV maintenance',
+  '3136': 'Need AC maintenance',
+  '3137': 'Air filter reminder (ClimateMaster only)',
+  '3138': 'Air cleaner reminder (ClimateMaster only)',
+  '3140': 'Need HVAC maintenance',
+  '4000': 'ClimateTalk',
+  '6000': 'DR voluntary alert',
+  '6001': 'DR voluntary utility message',
+  '6100': 'DR mandatory alert',
+  '6101': 'DR mandatory message',
+  '6102': 'DR mandatory alert',
+  '6200': 'Monthly cost exceeded',
+  '6201': 'Monthly projected cost exceeded',
+  '6300': 'Network join successful',
+  '6301': 'Network join failed',
+  '7000': 'Registration confirmation',
+  '7001': 'Registration Remind me alert',
+  '7002': 'Web initiated messages - such as Utility welcome message or similar',
+  '9000': 'ClimateMaster fault',
+  '9255': 'ClimateMaster fault max',
+  '9500': 'ClimateMaster disconnected',
+  '9755': 'ClimateMaster disconnected max'
+};
+
+
+/**
  * Get the current indoor temperature seen by the ecobee.
  *
  * @param {Object=} opt_data Data to read from. If not provided, will use the
@@ -175,6 +259,40 @@ component.thermostat.ecobee.prototype.get_weather = function(opt_data) {
   }
 
   return weather;
+};
+
+
+/**
+ * Get the current thermostat alerts.
+ *
+ * @param {Object=} opt_data Data to read from. If not provided, will use the
+ * cache.
+ *
+ * @return {Array.<Object>}
+ */
+component.thermostat.ecobee.prototype.get_alerts = function(opt_data) {
+  var self = this;
+
+  var data = opt_data !== undefined ? opt_data : cache.cache;
+  var alerts = [];
+
+  if (
+    data.ecobee_thermostat &&
+    data.ecobee_thermostat[this.ecobee_thermostat_id_] &&
+    data.ecobee_thermostat[this.ecobee_thermostat_id_].alerts
+  ) {
+    data.ecobee_thermostat[this.ecobee_thermostat_id_].alerts.forEach(function(alert) {
+      alerts.push({
+        'alert_id': alert.acknowledgeRef,
+        'code': alert.alertNumber,
+        'text': (component.thermostat.ecobee.alerts[alert.alertNumber] !== undefined) ?
+          component.thermostat.ecobee.alerts[alert.alertNumber] :
+          'See ecobee for alert'
+      });
+    });
+  }
+
+  return alerts;
 };
 
 
@@ -598,6 +716,17 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
   if (new_program !== undefined && new_program !== current_program) {
     events.push({
       'type': 'thermostat_program_change',
+      'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
+    );
+  }
+
+  // Alerts change
+  var current_alerts = this.get_alerts();
+  var new_alerts = this.get_alerts(data);
+
+  if (new_alerts !== undefined && $.equal(new_alerts, current_alerts) === false) {
+    events.push({
+      'type': 'thermostat_alerts_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
   }

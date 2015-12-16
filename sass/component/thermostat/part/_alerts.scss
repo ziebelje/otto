@@ -1,0 +1,43 @@
+& td {
+  vertical-align: middle;
+}
+
+& .bell {
+  color: $sunflower;
+  font-size: 14px;
+  padding-right: $gutter / 2;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  float: left;
+  // background: blue;
+  height: 20px;
+  line-height: 20px;
+}
+
+& .text {
+  color: $wet_asphalt;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  float: left;
+  // background: red;
+  overflow: hidden;
+  height: 20px;
+  line-height: 20px;
+}
+
+& .show {
+  opacity: 1;
+}
+
+& .text_slider {
+}
+
+& .text_slider.transition {
+  transition: margin-top 500ms ease;
+  // transition: none;
+}
+
+& .text_slider.slide {
+  margin-top: -20px;
+}

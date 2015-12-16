@@ -81,12 +81,20 @@ component.thermostat.prototype.decorate = function(parent) {
   // Program
   var part_program = new component.thermostat.part.program(this);
   part_program.render(footer_table.td(1, 0));
+
+  // Alerts
+  var part_alerts_container = $.createElement('div').addClass('alerts');
+  card.appendChild(part_alerts_container);
+  var part_alerts = new component.thermostat.part.alerts(this);
+  part_alerts.render(part_alerts_container);
 };
 
 
 component.thermostat.prototype.get_temperature = function() {};
 
 component.thermostat.prototype.get_weather = function() {};
+
+component.thermostat.prototype.get_alerts = function() {};
 
 component.thermostat.prototype.get_program = function() {};
 component.thermostat.prototype.resume_schedule = function() {};
