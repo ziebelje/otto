@@ -67,12 +67,14 @@ class ecobee extends \yinaf\api {
     }
 
     if($curl_response === false || curl_errno($curl_handle) !== 0) {
-      throw new \Exception('cURL error: ' . curl_error($curl_handle));
+      die();
+      // throw new \Exception('cURL error: ' . curl_error($curl_handle));
     }
 
     $response = json_decode($curl_response, true);
     if($response === false) {
-      throw new \Exception('Invalid JSON');
+      die();
+      // throw new \Exception('Invalid JSON');
     }
 
     curl_close($curl_handle);
@@ -132,7 +134,8 @@ class ecobee extends \yinaf\api {
     );
 
     if(isset($response['access_token']) === false || isset($response['refresh_token']) === false) {
-      throw new \Exception('Could not grant token');
+      die();
+      // throw new \Exception('Could not grant token');
     }
 
     $this->api('ecobee_token', 'create', array(
@@ -166,7 +169,8 @@ class ecobee extends \yinaf\api {
     );
 
     if(isset($response['access_token']) === false || isset($response['refresh_token']) === false) {
-      throw new \Exception('Could not refresh token');
+      die();
+      // throw new \Exception('Could not refresh token');
     }
 
     $this->api('ecobee_token', 'create', array(
