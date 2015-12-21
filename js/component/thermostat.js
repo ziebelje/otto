@@ -33,7 +33,7 @@ component.thermostat.prototype.decorate = function(parent) {
   var setpoint_temperature_table = new jex.table({'rows': 1, 'columns': 3});
   card.appendChild(setpoint_temperature_table.table());
   setpoint_temperature_table.table().addClass('setpoint_temperature_table');
-  setpoint_temperature_table.td(1, 0).addClass('temperature_td');
+  // setpoint_temperature_table.td(1, 0).addClass('temperature_td');
 
   // Setpoints
   var setpoint_outer_container = $.createElement('div').addClass('setpoint_outer_container');
@@ -54,8 +54,10 @@ component.thermostat.prototype.decorate = function(parent) {
   this.envoy.addEventListener('thermostat_mode_change', this.thermostat_mode_change_.bind(this));
 
   // Temperature
+  var part_temperature_container = $.createElement('div').addClass('temperature');
+  setpoint_temperature_table.td(1, 0).appendChild(part_temperature_container);
   var part_temperature = new component.thermostat.part.temperature(this);
-  part_temperature.render(setpoint_temperature_table.td(1, 0));
+  part_temperature.render(part_temperature_container);
 
   // Mode
   var part_mode_container = $.createElement('div').addClass('mode');
@@ -87,6 +89,12 @@ component.thermostat.prototype.decorate = function(parent) {
   card.appendChild(part_alerts_container);
   var part_alerts = new component.thermostat.part.alerts(this);
   part_alerts.render(part_alerts_container);
+
+  // Equipment
+  var part_equipment_container = $.createElement('div').addClass('equipment');
+  part_temperature_container.appendChild(part_equipment_container);
+  var part_equipment = new component.thermostat.part.equipment(this);
+  part_equipment.render(part_equipment_container);
 };
 
 
@@ -95,6 +103,8 @@ component.thermostat.prototype.get_temperature = function() {};
 component.thermostat.prototype.get_weather = function() {};
 
 component.thermostat.prototype.get_alerts = function() {};
+
+component.thermostat.prototype.get_equipment = function() {};
 
 component.thermostat.prototype.get_program = function() {};
 component.thermostat.prototype.resume_schedule = function() {};

@@ -1,0 +1,25 @@
+$transition_duration: 400ms;
+$image_size: 24px;
+
+& img {
+  position: absolute;
+  transition:
+    opacity $transition_duration ease,
+    width   $transition_duration ease,
+    height  $transition_duration ease,
+    padding $transition_duration ease;
+}
+
+& img.show {
+  width: $image_size;
+  height: $image_size;
+  padding: 0px;
+  opacity: 1;
+}
+
+& img.hide {
+  width: 0px;
+  height: 0px;
+  padding: $image_size / 2;
+  opacity: 0;
+}

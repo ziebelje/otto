@@ -41,6 +41,35 @@ component.thermostat.ecobee.modes = {
 
 
 /**
+ * Normalized equipment list and what they map to on the ecobee. TODO: This
+ * list is inverted from component.thermostat.ecobee.modes. I wanted the modes
+ * list in that order so I could easily access a list of modes on the mode
+ * part. I think I may just invert that though ($.values?) so these arrays can
+ * match. Or I could just define heat_pump_1 or whatever in this array but I
+ * don't find that data meaningful right now.
+ *
+ * @type {Object}
+ */
+component.thermostat.ecobee.equipment = {
+  'heatPump': 'heat_pump',
+  'heatPump2': 'heat_pump',
+  'heatPump3': 'heat_pump',
+  'compCool1': 'compCool1',
+  'compCool2': 'compCool2',
+  'auxHeat1': 'aux',
+  'auxHeat2': 'aux',
+  'auxHeat3': 'aux',
+  'fan': 'fan',
+  'humidifier': 'humidifier',
+  'dehumidifier': 'dehumidifier',
+  'ventilator': 'ventilator',
+  'economizer': 'economizer',
+  'compHotWater': 'compHotWater',
+  'auxHotWater': 'auxHotWater'
+};
+
+
+/**
  * Alert map. The default ecobee alert text is a bit too verbose so I'm using
  * the codes to display shorter alerts.
  *
@@ -69,7 +98,7 @@ component.thermostat.ecobee.alerts = {
   '1005': 'Problem with heatpump heating',
   '1006': 'Problem with cooling',
   '1007': 'Communication to EI failed',
-  '1009': 'Problem with aux heat, running too much',
+  '1009': 'Aux heat running too much',
   '1010': 'Aux heat used with high outdoor temp',
   '1011': 'Sensor activated switching to occupied',
   '1012': 'Sensor activated switching to unoccupied',
@@ -229,6 +258,7 @@ component.thermostat.ecobee.prototype.get_mode = function(opt_data) {
       })[0];
   }
 
+  // TODO: add support for undeclared modes
   return mode;
 };
 
@@ -293,6 +323,34 @@ component.thermostat.ecobee.prototype.get_alerts = function(opt_data) {
   }
 
   return alerts;
+};
+
+
+/**
+ * Get a list of currently running equipment.
+ *
+ * @param {Object=} opt_data Data to read from. If not provided, will use the
+ * cache.
+ *
+ * @return {Array.<string>}
+ */
+component.thermostat.ecobee.prototype.get_equipment = function(opt_data) {
+  var self = this;
+
+  var data = opt_data !== undefined ? opt_data : cache.cache;
+  var equipment = [];
+
+  if (
+    data.ecobee_thermostat &&
+    data.ecobee_thermostat[this.ecobee_thermostat_id_] &&
+    data.ecobee_thermostat[this.ecobee_thermostat_id_].equipment_status
+  ) {
+    data.ecobee_thermostat[this.ecobee_thermostat_id_].equipment_status.forEach(function(equipment_status) {
+      equipment.push(component.thermostat.ecobee.equipment[equipment_status]);
+    });
+  }
+
+  return equipment;
 };
 
 
@@ -727,6 +785,22 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
   if (new_alerts !== undefined && $.equal(new_alerts, current_alerts) === false) {
     events.push({
       'type': 'thermostat_alerts_change',
+      'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
+    );
+  }
+
+  // Equipment change
+  var current_equipment = this.get_equipment();
+  var new_equipment = this.get_equipment(data);
+
+  // console.log('check for equipment change');
+  // console.log(current_equipment);
+  // console.log(new_equipment);
+  // new_equipment = ['heat_pump', 'fan', 'aux'];
+
+  if (new_equipment !== undefined && $.equal(new_equipment.sort(), current_equipment.sort()) === false) {
+    events.push({
+      'type': 'thermostat_equipment_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
   }

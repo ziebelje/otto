@@ -31,7 +31,7 @@ component.thermostat.part.mode.prototype.decorate = function(parent) {
   var self = this;
 
   this.parent_ = parent;
-  this.current_mode_ = this.thermostat_.get_mode();
+  this.current_mode_ = this.thermostat_.get_mode(); // TODO: Why am I setting this twice?
 
   var modes = ['off', 'auto', 'heat', 'cool', 'aux'];
   // TODO: component.thermostat.ecobee.modes (this.thermostat_.modes?) would
@@ -58,7 +58,7 @@ component.thermostat.part.mode.prototype.decorate = function(parent) {
     parent.appendChild(option);
   });
 
-  this.current_mode_ = this.thermostat_.get_effective_mode();
+  this.current_mode_ = this.thermostat_.get_effective_mode(); // TODO: Why am I setting this twice?
   this.envoy.addEventListener('thermostat_mode_change', this.thermostat_mode_change_.bind(this));
 };
 

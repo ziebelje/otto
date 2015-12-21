@@ -6,8 +6,18 @@ $thermostat_setpoint_width: 50px;
   margin: ($gutter * 4) 0 ($gutter * 4) 0;
   table-layout: fixed;
 }
-& .temperature_td {
+& .temperature {
   width: 200px;
+  position: relative;
+}
+
+// Equipment
+& .equipment {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 // Setpoint containers

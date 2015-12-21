@@ -33,6 +33,7 @@ $border_radius: 2px;
       &.setpoint { @import "component/thermostat/part/setpoint"; }
       &.program { @import "component/thermostat/part/program"; }
       &.alerts { @import "component/thermostat/part/alerts"; }
+      &.equipment { @import "component/thermostat/part/equipment"; }
     }
   }
 }
