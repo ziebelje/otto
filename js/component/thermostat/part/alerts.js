@@ -66,7 +66,6 @@ component.thermostat.part.alerts.prototype.thermostat_alerts_change_ = function(
     clearInterval(this.cycle_interval_);
 
     var new_alerts = this.thermostat_.get_alerts();
-    console.log(new_alerts);
 
     // Show or hide the alerts
     if (new_alerts.length > 0) {
