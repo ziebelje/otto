@@ -36,6 +36,7 @@ component.thermostat.part.mode.prototype.decorate = function(parent) {
   var modes = ['off', 'auto', 'heat', 'cool', 'aux'];
   // TODO: component.thermostat.ecobee.modes (this.thermostat_.modes?) would
   // need to make modes a prototype
+  // Actually needs to be this.thermostat_.modes to avoid referencing vendor-specific thermostat
 
   var foo = $.createElement('div').style('position', 'relative');
   parent.appendChild(foo);
@@ -82,14 +83,28 @@ component.thermostat.part.mode.prototype.thermostat_mode_change_ = function(e) {
       if (option.dataset('mode') === new_mode) {
         option.addClass('active');
 
-        var option_rect = option.getBoundingClientRect();
-        var parent_rect = self.parent_.getBoundingClientRect();
-        self.slider_.style({
-          'top': option_rect.top - parent_rect.top,
-          'width': option_rect.width,
-          'height': option_rect.height,
-          'opacity': 1
-        });
+        var f = function() {
+          var option_rect = option.getBoundingClientRect();
+          var parent_rect = self.parent_.getBoundingClientRect();
+
+          self.slider_.style({
+            'top': option_rect.top - parent_rect.top,
+            'width': option_rect.width,
+            'height': option_rect.height,
+            'opacity': 1
+          });
+        };
+
+        // This is less than ideal but it works. The bounding client rect calls
+        // are getting bad info because not everything is completely rendered
+        // when they run. Calling this on a delay fixes that. It seems to only
+        // happen on remote connections and a short delay usually works but on
+        // slower connections or when ctrl+shift+r-ing sometimes a longer delay
+        // is needed.
+        f();                // First try
+        setTimeout(f, 50);  // Usually works
+        setTimeout(f, 200); // Still looks nice and handles 99% of situations
+        setTimeout(f, 500); // Effect is jumpy at this point, just a failsafe
       }
     });
 
