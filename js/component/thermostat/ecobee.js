@@ -282,10 +282,17 @@ component.thermostat.ecobee.prototype.get_mode = function(opt_data) {
         .filter(function(key) {
           return component.thermostat.ecobee.modes[key] === data.ecobee_thermostat[self.ecobee_thermostat_id_].settings.hvacMode;
         })[0];
+
+      // If the mode the ecobee returns is not defined in my list, return
+      // anything other than undefined. An undefined value will not cause the
+      // dispatcher to see a change. A non-undefined value will.
+      if (mode === undefined) {
+        mode = 'unknown';
+        console.error('Thermstat mode is unknown; ecobee hvacMode is ' + data.ecobee_thermostat[self.ecobee_thermostat_id_].settings.hvacMode);
+      }
     }
   }
 
-  // TODO: add support for undeclared modes
   return mode;
 };
 
@@ -775,12 +782,6 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
       'type': 'thermostat_mode_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
-
-    // Changing the temperature will also cancel a vacation or any other event.
-    // events.push({
-    //   'type': 'thermostat_program_change',
-    //   'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
-    // );
   }
 
   // Cool setpoint change
@@ -799,12 +800,6 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
       'type': 'thermostat_mode_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
-
-    // Changing the temperature will also cancel a vacation or any other event.
-    // events.push({
-    //   'type': 'thermostat_program_change',
-    //   'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
-    // );
   }
 
   // Program change
