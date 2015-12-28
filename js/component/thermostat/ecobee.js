@@ -243,19 +243,46 @@ component.thermostat.ecobee.prototype.get_mode = function(opt_data) {
   var self = this;
 
   var data = opt_data !== undefined ? opt_data : cache.cache;
+  var program = this.get_program(opt_data);
   var mode;
 
-  if (
-    data.ecobee_thermostat &&
-    data.ecobee_thermostat[this.ecobee_thermostat_id_] &&
-    data.ecobee_thermostat[this.ecobee_thermostat_id_].settings &&
-    data.ecobee_thermostat[this.ecobee_thermostat_id_].settings.hvacMode
-  ) {
-    // Look up normalized mode from ecobee.mode
-    mode = Object.keys(component.thermostat.ecobee.modes)
-      .filter(function(key) {
-        return component.thermostat.ecobee.modes[key] === data.ecobee_thermostat[self.ecobee_thermostat_id_].settings.hvacMode;
-      })[0];
+  // Vacation events do not alter settings.hvacMode, so if it's a vacation then
+  // some stuff needs to be overridden. Note that this could still kind of seem
+  // wrong. For example, if the system is still in vacation mode but is starting
+  // to warm up the house, it might show as off when the heat is actually
+  // running. This is fine as I'd rather see the current setpoints and then just
+  // see that some equipment is running.
+  if (program === 'vacation') {
+    data.ecobee_thermostat[this.ecobee_thermostat_id_].events.forEach(function(event) {
+      if (event.type === 'vacation') {
+        if (event.isCoolOff === true && event.isHeatOff === true) {
+          mode = 'off';
+        }
+        else if (event.isCoolOff === false && event.isHeatOff === false) {
+          mode = 'auto';
+        }
+        else if (event.isCoolOff === true && event.isHeatOff === false) {
+          mode = 'heat';
+        }
+        else if (event.isCoolOff === false && event.isHeatOff === true) {
+          mode = 'cool';
+        }
+      }
+    });
+  }
+  else {
+    if (
+      data.ecobee_thermostat &&
+      data.ecobee_thermostat[this.ecobee_thermostat_id_] &&
+      data.ecobee_thermostat[this.ecobee_thermostat_id_].settings &&
+      data.ecobee_thermostat[this.ecobee_thermostat_id_].settings.hvacMode
+    ) {
+      // Look up normalized mode from ecobee.mode
+      mode = Object.keys(component.thermostat.ecobee.modes)
+        .filter(function(key) {
+          return component.thermostat.ecobee.modes[key] === data.ecobee_thermostat[self.ecobee_thermostat_id_].settings.hvacMode;
+        })[0];
+    }
   }
 
   // TODO: add support for undeclared modes
@@ -507,6 +534,7 @@ component.thermostat.ecobee.prototype.get_program = function(opt_data) {
     for (var i = 0; i < data.ecobee_thermostat[this.ecobee_thermostat_id_].events.length; i++) {
       if (data.ecobee_thermostat[this.ecobee_thermostat_id_].events[i].running === true) {
         current_event = data.ecobee_thermostat[this.ecobee_thermostat_id_].events[i];
+        break; // First running event wins
       }
     }
   }
@@ -747,6 +775,12 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
       'type': 'thermostat_mode_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
+
+    // Changing the temperature will also cancel a vacation or any other event.
+    // events.push({
+    //   'type': 'thermostat_program_change',
+    //   'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
+    // );
   }
 
   // Cool setpoint change
@@ -765,6 +799,12 @@ component.thermostat.ecobee.prototype.dispatch = function(data) {
       'type': 'thermostat_mode_change',
       'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
     );
+
+    // Changing the temperature will also cancel a vacation or any other event.
+    // events.push({
+    //   'type': 'thermostat_program_change',
+    //   'detail': {'ecobee_thermostat_id': this.ecobee_thermostat_id_, 'component': this}}
+    // );
   }
 
   // Program change

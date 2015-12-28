@@ -38,7 +38,12 @@ component.thermostat.part.setpoint.prototype.decorate = function(parent) {
   container.appendChild(arrow_up);
 
   arrow_up.addEventListener('mousedown', function() {
-    self.thermostat_['set_' + self.type_ + '_setpoint'](self.thermostat_['get_' + self.type_ + '_setpoint']() + 1);
+    if (self.thermostat_.get_program() === 'vacation') {
+      self.thermostat_.resume_schedule();
+    }
+    else {
+      self.thermostat_['set_' + self.type_ + '_setpoint'](self.thermostat_['get_' + self.type_ + '_setpoint']() + 1);
+    }
   });
 
   // Value
@@ -49,10 +54,14 @@ component.thermostat.part.setpoint.prototype.decorate = function(parent) {
   var arrow_down = $.createElement('div').innerHTML('▼').addClass(['arrow', this.type_]);
   container.appendChild(arrow_down);
   arrow_down.addEventListener('mousedown', function() {
-    self.thermostat_['set_' + self.type_ + '_setpoint'](self.thermostat_['get_' + self.type_ + '_setpoint']() - 1);
+    if (self.thermostat_.get_program() === 'vacation') {
+      self.thermostat_.resume_schedule();
+    }
+    else {
+      self.thermostat_['set_' + self.type_ + '_setpoint'](self.thermostat_['get_' + self.type_ + '_setpoint']() - 1);
+    }
   });
 
-  // this.current_setpoint_ = this.thermostat_['get_' + this.type_ + '_setpoint']();
   this.envoy.addEventListener('thermostat_heat_setpoint_change', this.thermostat_setpoint_change_.bind(this));
   this.envoy.addEventListener('thermostat_cool_setpoint_change', this.thermostat_setpoint_change_.bind(this));
 };
